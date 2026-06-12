@@ -448,12 +448,12 @@ button, input, textarea {
     border-radius: var(--border-radius-lg);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     overflow: hidden;
-    transform: rotateY(-5deg) rotateX(5deg);
-    transition: var(--transition-smooth);
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateY(-5deg) rotateX(5deg) scale3d(1, 1, 1);
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .mockup-frame:hover {
-    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
     box-shadow: 0 30px 60px rgba(0, 240, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     border-color: var(--glass-border-hover);
 }
@@ -672,11 +672,13 @@ button, input, textarea {
     border: 1px solid var(--glass-border);
     border-radius: var(--border-radius-lg);
     padding: 32px;
-    transition: var(--transition-smooth);
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease;
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);
 }
 
 /* Light indicator on card top */
@@ -1046,8 +1048,10 @@ button, input, textarea {
     position: absolute;
     inset: 0;
     border-radius: 24px;
-    padding: 3px; /* border thickness */
-    background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-volt) 50%, var(--accent-indigo) 100%);
+    padding: 3px;
+    background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-volt) 33%, var(--accent-indigo) 66%, var(--accent-gold) 100%);
+    background-size: 300% 300%;
+    animation: gradient-rotate 8s linear infinite;
     -webkit-mask: 
        linear-gradient(#fff 0 0) content-box, 
        linear-gradient(#fff 0 0);
@@ -1606,3 +1610,89 @@ button, input, textarea {
         font-size: 1.6rem;
     }
 }
+
+/* --- Next-Level Animation Extensions --- */
+
+/* Mouse Glow Trail */
+#cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.07) 0%, rgba(99, 102, 241, 0.02) 40%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.5s ease, width 0.3s ease, height 0.3s ease;
+}
+
+body:hover #cursor-glow {
+    opacity: 1;
+}
+
+#cursor-glow.active {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(99, 102, 241, 0.04) 45%, transparent 70%);
+}
+
+/* Staggered Word Reveal */
+.word-wrapper {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.word {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--delay) * 0.08s);
+}
+
+.revealed .word {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Rotating Gradient Borders */
+@keyframes gradient-rotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 3D Depth Offsets for Card Elements on Hover */
+.service-card .service-icon-wrapper,
+.service-card .service-name,
+.service-card .service-desc {
+    transition: transform 0.15s ease-out;
+}
+
+.service-card .service-icon-wrapper {
+    transform: translateZ(25px);
+}
+
+.service-card .service-name {
+    transform: translateZ(20px);
+}
+
+.service-card .service-desc {
+    transform: translateZ(15px);
+}
+
+/* Background Cyber Grid Motion */
+@keyframes bg-grid-drift {
+    from { background-position: 0 0; }
+    to { background-position: 50px 50px; }
+}
+
+.bg-grid {
+    animation: bg-grid-drift 20s linear infinite;
+}
+

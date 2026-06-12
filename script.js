@@ -270,4 +270,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* --- Next-Level Cursor Glow Trail --- */
+    const cursorGlow = document.getElementById('cursor-glow');
+    let mouseX = 0, mouseY = 0; // Target position
+    let glowX = 0, glowY = 0;   // Current position
+    const speed = 0.08;         // Lerp easing factor
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    const updateGlow = () => {
+        glowX += (mouseX - glowX) * speed;
+        glowY += (mouseY - glowY) * speed;
+        
+        if (cursorGlow) {
+            cursorGlow.style.left = `${glowX}px`;
+            cursorGlow.style.top = `${glowY}px`;
+        }
+        
+        requestAnimationFrame(updateGlow);
+    };
+    
+    // Start tracking
+    updateGlow();
+
+    // Scale up glow on interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, .service-card, input, textarea, .quick-reply-btn');
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            if (cursorGlow) cursorGlow.classList.add('active');
+        });
+        el.addEventListener('mouseleave', () => {
+            if (cursorGlow) cursorGlow.classList.remove('active');
+        });
+    });
+
+    /* --- 3D Card Tilt Parallax --- */
+    const tiltElements = document.querySelectorAll('.service-card, .mockup-frame');
+    
+    tiltElements.forEach(element => {
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            
+            // Position relative to element
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Half dimensions
+            const xc = rect.width / 2;
+            const yc = rect.height / 2;
+            
+            // Offsets from center
+            const dx = x - xc;
+            const dy = y - yc;
+            
+            // Calculate tilt angle (capping at 12 degrees max)
+            const rotX = -(dy / yc) * 12;
+            const rotY = (dx / xc) * 12;
+            
+            // Apply 3D tilt transform
+            element.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            // Reset to default CSS transform
+            element.style.transform = '';
+        });
+    });
+
 });
+
